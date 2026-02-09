@@ -1,9 +1,9 @@
-# Stage 1: Dependencies (matches prod:init – use npm install for deploy compatibility)
+# Stage 1: Dependencies (use npm install – do not use npm ci for portainer/remote build compatibility)
 FROM node:20-alpine AS deps
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm install --no-audit --no-fund
 
 # Stage 2: Build (prisma generate + next build, same as prod:init; db:push/db:seed run at container start)
 FROM node:20-alpine AS builder
