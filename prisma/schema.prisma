@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SiteSettings {
+  id              String  @id @default("singleton")
+  siteTitle       String  @default("My Site")
+  siteDescription String  @default("")
+  siteUrl         String  @default("")
+  siteLogo        String?
+
+  heroTitle    String  @default("Welcome")
+  heroSubtitle String  @default("")
+  heroImage    String?
+
+  metaTitle       String @default("")
+  metaDescription String @default("")
+  ogImage         String?
+
+  theme       String @default("{}")
+  socialLinks String @default("[]")
+  footerText  String @default("")
+
+  favicon   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Page {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  content   String   @default("")
+  active    Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@index([slug])
+}
+
+model Link {
+  id        String   @id @default(cuid())
+  title     String
+  url       String
+  icon      String?
+  logoImage String?
+  color     String?
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
+model BlogPost {
+  id      String @id @default(cuid())
+  title   String
+  slug    String @unique
+  content String
+  excerpt String?
+
+  heroImage String?
+
+  metaTitle       String?
+  metaDescription String?
+  metaKeywords    String?
+  ogImage         String?
+
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published, publishedAt(sort: Desc)])
+  @@index([slug])
+}
+
+model Upload {
+  id        String   @id @default(cuid())
+  filename  String
+  original  String
+  path      String
+  mimeType  String
+  size      Int
+  width     Int?
+  height    Int?
+  createdAt DateTime @default(now())
+}
