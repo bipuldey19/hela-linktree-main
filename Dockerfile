@@ -1,9 +1,13 @@
-# Stage 1: Dependencies (use npm install – do not use npm ci for portainer/remote build compatibility)
+# Stage 1: Dependencies (better-sqlite3 and sharp need build tools on Alpine)
 FROM node:20-alpine AS deps
 WORKDIR /app
 
+# Build tools for native modules (better-sqlite3 needs node-gyp)
+RUN apk add --no-cache python3 make g++
+
 COPY package.json package-lock.json ./
-RUN npm install --no-audit --no-fund
+RUN npm config set fetch-timeout 120000 && npm config set fetch-retries 5 && \
+    npm install --no-audit --no-fund
 
 # Stage 2: Build (prisma generate + next build, same as prod:init; db:push/db:seed run at container start)
 FROM node:20-alpine AS builder
