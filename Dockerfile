@@ -29,7 +29,13 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Install only production dependencies needed at runtime
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat su-exec curl
+
+# Install PM2 for process management
+RUN npm install -g pm2
+
+# Copy PM2 config for Docker
+COPY deployment/ecosystem.docker.js ./ecosystem.config.js
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs && \
@@ -53,15 +59,15 @@ COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
 COPY --from=builder /app/node_modules/dotenv ./node_modules/dotenv
 COPY --from=builder /app/node_modules/tsx ./node_modules/tsx
 
-# Copy entrypoint script
+# Copy entrypoint script (after COPY ecosystem so it can reference it)
 COPY scripts/docker-entrypoint.sh ./docker-entrypoint.sh
-RUN chmod +x ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh && chown nextjs:nodejs ecosystem.config.js
 
 # Create directories for uploads and database with proper permissions
 RUN mkdir -p public/uploads/blog public/uploads/site && \
-    chown -R nextjs:nodejs public/uploads prisma .next
+    chown -R nextjs:nodejs /app
 
-USER nextjs
+# Run as root so entrypoint can fix volume permissions on start, then PM2 runs as nextjs
 
 EXPOSE 3000
 

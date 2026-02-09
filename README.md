@@ -53,6 +53,8 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ### Docker
 
+The image runs the app with **PM2** (process manager) in the container.
+
 ```bash
 # Set env (e.g. AUTH_SECRET, AUTH_URL, SITE_URL) in .env or export them, then:
 docker compose up -d --build

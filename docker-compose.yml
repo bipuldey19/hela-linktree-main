@@ -1,3 +1,6 @@
+# Production: set AUTH_SECRET, AUTH_URL, SITE_URL (e.g. in .env or export before docker compose up)
+# Example: AUTH_SECRET=$(openssl rand -base64 32) AUTH_URL=https://yoursite.com SITE_URL=https://yoursite.com docker compose up -d --build
+
 services:
   app:
     build:
@@ -6,16 +9,22 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - NODE_ENV=production
+      - PORT=3000
       - DATABASE_URL=file:./prisma/dev.db
       - AUTH_SECRET=${AUTH_SECRET:-change-me-generate-a-secret}
       - AUTH_URL=${AUTH_URL:-http://localhost:3000}
       - SITE_URL=${SITE_URL:-http://localhost:3000}
-      - NODE_ENV=production
     volumes:
-      # Persist database and uploads across container restarts
       - db-data:/app/prisma
       - uploads-data:/app/public/uploads
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 45s
 
 volumes:
   db-data:
