@@ -1,25 +1,20 @@
-# Stage 1: Dependencies
+# Stage 1: Dependencies (matches prod:init – use npm install for deploy compatibility)
 FROM node:20-alpine AS deps
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm install
 
-# Stage 2: Build
+# Stage 2: Build (prisma generate + next build, same as prod:init; db:push/db:seed run at container start)
 FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Prisma config may read DATABASE_URL; use placeholder for build (no DB needed for generate)
 ENV DATABASE_URL="file:./prisma/dev.db"
 
-# Generate Prisma client
-RUN npx prisma generate
-
-# Build Next.js
-RUN npm run build
+RUN npx prisma generate && npm run build
 
 # Stage 3: Production
 FROM node:20-alpine AS runner
