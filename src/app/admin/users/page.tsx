@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import UsersPageClient from "./UsersPageClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function UsersPage() {
   const session = await auth();
   const users = await prisma.user.findMany({

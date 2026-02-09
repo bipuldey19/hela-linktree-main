@@ -4,6 +4,8 @@ import { parseTheme, getThemeCssVariables } from "@/lib/theme";
 import Header from "@/components/public/Header";
 import Footer from "@/components/public/Footer";
 
+export const dynamic = "force-dynamic";
+
 async function getSiteSettings() {
   const settings = await prisma.siteSettings.findUnique({
     where: { id: "singleton" },

@@ -1,28 +1,19 @@
-import { NextResponse } from "next/server";
+import NextAuth from "next-auth";
 import type { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
+import authConfig from "@/lib/auth.config";
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+// Use edge-compatible config (same JWT/callbacks as auth.ts, no Prisma)
+const { auth } = NextAuth(authConfig);
 
-  // Skip login page
-  if (pathname === "/admin/login") {
-    return NextResponse.next();
+export default auth((req) => {
+  const isLoggedIn = !!req.auth;
+  const isLoginPage = req.nextUrl.pathname === "/admin/login";
+
+  if (isLoginPage) return;
+  if (!isLoggedIn) {
+    return Response.redirect(new URL("/admin/login", req.url));
   }
-
-  // Check for auth token on admin routes
-  const token = await getToken({
-    req: request,
-    secret: process.env.AUTH_SECRET,
-  });
-
-  if (!token) {
-    const loginUrl = new URL("/admin/login", request.url);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: ["/admin/:path*"],

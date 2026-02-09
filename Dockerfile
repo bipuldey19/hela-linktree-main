@@ -17,6 +17,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ENV DATABASE_URL="file:./prisma/dev.db"
+ENV DOCKER_BUILD=1
 
 RUN npx prisma generate && npm run build
 

@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { parseTheme } from "@/lib/theme";
 import SettingsPageClient from "./SettingsPageClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function SettingsPage() {
   const [settings, links] = await Promise.all([
     prisma.siteSettings.findUnique({ where: { id: "singleton" } }),

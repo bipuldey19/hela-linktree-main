@@ -5,6 +5,8 @@ import HeroSection from "@/components/public/HeroSection";
 import LinkList from "@/components/public/LinkList";
 import BlogGrid from "@/components/public/BlogGrid";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const [settings, links, recentPosts] = await Promise.all([
     prisma.siteSettings.findUnique({ where: { id: "singleton" } }),

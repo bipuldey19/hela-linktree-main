@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import MediaLibraryClient from "./MediaLibraryClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function MediaPage() {
   const uploads = await prisma.upload.findMany({
     orderBy: { createdAt: "desc" },

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requireAuth } from "@/lib/auth-utils";
+import { requireAuth } from "@/lib/auth";
 import { processAndSaveImage } from "@/lib/upload";
 
 export async function POST(request: Request) {

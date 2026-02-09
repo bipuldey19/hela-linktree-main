@@ -1,13 +1,3 @@
-import { auth } from "./auth";
-
-export async function requireAuth() {
-  const session = await auth();
-  if (!session?.user) {
-    throw new Error("Unauthorized");
-  }
-  return session;
-}
-
-export async function getSession() {
-  return await auth();
-}
+// Re-export from auth so existing getSession imports keep working.
+export { auth as getSession } from "./auth";
+export { requireAuth } from "./auth";

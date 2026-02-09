@@ -4,6 +4,8 @@ import { POSTS_PER_PAGE } from "@/lib/constants";
 import BlogGrid from "@/components/public/BlogGrid";
 import Pagination from "@/components/public/Pagination";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Blog",
   description: "Read our latest posts",

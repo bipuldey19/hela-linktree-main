@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireAuth } from "@/lib/auth-utils";
+import { requireAuth } from "@/lib/auth";
 import { createPostSchema } from "@/lib/validators";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { generateSlug, ensureUniqueSlug } from "@/lib/slug";
