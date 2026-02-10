@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Textarea from "@/components/ui/Textarea";
 import { useToast } from "@/components/ui/Toast";
+import ImageUploader from "@/components/admin/ImageUploader";
 import slugify from "slugify";
 
 interface PostFormProps {
@@ -45,11 +46,31 @@ export default function PostForm({ initialData }: PostFormProps) {
   const [showSeo, setShowSeo] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [saving, setSaving] = useState(false);
+  const contentRef = useRef<HTMLTextAreaElement>(null);
+  const [contentImageUrl, setContentImageUrl] = useState("");
+  const [contentImageImporting, setContentImageImporting] = useState(false);
+  const [contentImageUploading, setContentImageUploading] = useState(false);
 
   function handleTitleChange(value: string) {
     setTitle(value);
     if (!isEditing || !initialData?.slug) {
       setSlug(slugify(value, { lower: true, strict: true }));
+    }
+  }
+
+  function insertContentImage(url: string) {
+    const el = contentRef.current;
+    const tag = `<img src="${url}" alt="" />`;
+    if (el) {
+      const start = el.selectionStart;
+      const end = el.selectionEnd;
+      setContent(content.slice(0, start) + tag + content.slice(end));
+      setTimeout(() => {
+        el.focus();
+        el.setSelectionRange(start + tag.length, start + tag.length);
+      }, 0);
+    } else {
+      setContent((c) => c + tag);
     }
   }
 
@@ -120,12 +141,17 @@ export default function PostForm({ initialData }: PostFormProps) {
           onChange={(e) => setSlug(e.target.value)}
           placeholder="post-url-slug"
         />
-        <Input
-          label="Hero Image URL"
-          value={heroImage}
-          onChange={(e) => setHeroImage(e.target.value)}
-          placeholder="/uploads/blog/image.webp"
-        />
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Hero Image
+          </label>
+          <ImageUploader
+            value={heroImage}
+            onChange={setHeroImage}
+            category="blog"
+            showImportFromUrl={true}
+          />
+        </div>
         <Textarea
           label="Excerpt"
           value={excerpt}
@@ -148,6 +174,88 @@ export default function PostForm({ initialData }: PostFormProps) {
             {showPreview ? "Edit" : "Preview"}
           </button>
         </div>
+        {!showPreview && (
+          <div className="mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="text-xs font-medium text-gray-600 mb-2">
+              Insert image into content (saved on server)
+            </p>
+            <div className="flex flex-wrap items-end gap-2 mb-2">
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                id="content-image-upload"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  setContentImageUploading(true);
+                  try {
+                    const fd = new FormData();
+                    fd.append("file", file);
+                    fd.append("category", "blog");
+                    const res = await fetch("/api/upload", { method: "POST", body: fd });
+                    if (!res.ok) throw new Error("Upload failed");
+                    const data = await res.json();
+                    insertContentImage(data.url);
+                  } finally {
+                    setContentImageUploading(false);
+                    e.target.value = "";
+                  }
+                }}
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => document.getElementById("content-image-upload")?.click()}
+                loading={contentImageUploading}
+              >
+                Upload image
+              </Button>
+              <Input
+                value={contentImageUrl}
+                onChange={(e) => setContentImageUrl(e.target.value)}
+                placeholder="https://... (import to server)"
+                className="flex-1 min-w-[180px]"
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={async () => {
+                  const url = contentImageUrl.trim();
+                  if (!url || !url.startsWith("http")) {
+                    toast("Enter a valid image URL", "error");
+                    return;
+                  }
+                  setContentImageImporting(true);
+                  try {
+                    const res = await fetch("/api/upload/from-url", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ url, category: "blog" }),
+                    });
+                    if (!res.ok) {
+                      const d = await res.json();
+                      throw new Error(d.error || "Import failed");
+                    }
+                    const data = await res.json();
+                    insertContentImage(data.url);
+                    setContentImageUrl("");
+                  } catch (err) {
+                    toast(err instanceof Error ? err.message : "Import failed", "error");
+                  } finally {
+                    setContentImageImporting(false);
+                  }
+                }}
+                loading={contentImageImporting}
+                disabled={!contentImageUrl.trim()}
+              >
+                Import URL
+              </Button>
+            </div>
+          </div>
+        )}
         {showPreview ? (
           <div
             className="prose max-w-none border border-gray-200 rounded-lg p-4 min-h-[300px] bg-white"
@@ -155,6 +263,7 @@ export default function PostForm({ initialData }: PostFormProps) {
           />
         ) : (
           <textarea
+            ref={contentRef}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Paste your HTML content here..."
@@ -199,12 +308,17 @@ export default function PostForm({ initialData }: PostFormProps) {
               onChange={(e) => setMetaKeywords(e.target.value)}
               placeholder="comma, separated, keywords"
             />
-            <Input
-              label="OG Image URL"
-              value={ogImage}
-              onChange={(e) => setOgImage(e.target.value)}
-              placeholder="/uploads/blog/og-image.webp (defaults to hero image)"
-            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                OG Image (defaults to hero image)
+              </label>
+              <ImageUploader
+                value={ogImage}
+                onChange={setOgImage}
+                category="blog"
+                showImportFromUrl={true}
+              />
+            </div>
           </div>
         )}
       </div>

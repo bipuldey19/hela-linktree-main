@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { parseTheme, getThemeCssVariables } from "@/lib/theme";
-import Header from "@/components/public/Header";
 import Footer from "@/components/public/Footer";
 
 export const dynamic = "force-dynamic";
@@ -62,10 +61,6 @@ export default async function PublicLayout({
         className="min-h-screen flex flex-col bg-background"
         style={{ fontFamily: theme.fontFamily }}
       >
-        <Header
-          siteTitle={settings?.siteTitle || "My Site"}
-          pageLinks={pageLinks}
-        />
         <main className="flex-1">{children}</main>
         <Footer
           text={settings?.footerText || ""}
