@@ -16,9 +16,14 @@ export default function Footer({
     <footer className="w-full mt-20">
       <div className="border-t border-stone-200/60">
         <div className="max-w-4xl mx-auto px-5 py-8">
-          {pageLinks.length > 0 && (
-            <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mb-5">
-              {pageLinks.map((link) => (
+          <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mb-5">
+            <Link
+              href="/"
+              className="text-[13px] font-medium text-stone-400 hover:text-stone-600 transition-colors duration-200"
+            >
+              Home
+            </Link>
+            {pageLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -27,8 +32,7 @@ export default function Footer({
                   {link.label}
                 </Link>
               ))}
-            </nav>
-          )}
+          </nav>
           {text && (
             <p className="text-[13px] text-stone-400 leading-relaxed text-center">
               {text}
