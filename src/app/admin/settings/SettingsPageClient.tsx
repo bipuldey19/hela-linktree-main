@@ -4,7 +4,9 @@ import Tabs from "@/components/ui/Tabs";
 import SettingsForm from "@/components/admin/SettingsForm";
 import ThemeForm from "@/components/admin/ThemeForm";
 import LinkManager from "@/components/admin/LinkManager";
+import MidContentManager from "@/components/admin/MidContentManager";
 import type { ThemeConfig } from "@/types";
+import type { MidContentItem } from "@/components/admin/MidContentManager";
 
 interface Props {
   settings: {
@@ -32,9 +34,15 @@ interface Props {
     order: number;
     active: boolean;
   }[];
+  midContent: MidContentItem[];
 }
 
-export default function SettingsPageClient({ settings, theme, links }: Props) {
+export default function SettingsPageClient({
+  settings,
+  theme,
+  links,
+  midContent,
+}: Props) {
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Settings</h1>
@@ -46,14 +54,19 @@ export default function SettingsPageClient({ settings, theme, links }: Props) {
             content: <SettingsForm initialSettings={settings} />,
           },
           {
-            id: "theme",
-            label: "Theme",
-            content: <ThemeForm initialTheme={theme} />,
-          },
-          {
             id: "links",
             label: "Links",
             content: <LinkManager initialLinks={links} />,
+          },
+          {
+            id: "mid-content",
+            label: "Mid Content",
+            content: <MidContentManager initialItems={midContent} />,
+          },
+          {
+            id: "theme",
+            label: "Theme",
+            content: <ThemeForm initialTheme={theme} />,
           },
         ]}
       />

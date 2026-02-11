@@ -53,3 +53,22 @@ export const updateLinkSchema = createLinkSchema.partial();
 export const reorderLinksSchema = z.object({
   orderedIds: z.array(z.string()),
 });
+
+const linkButtonSchema = z.object({
+  label: z.string().min(1).max(80),
+  url: z.string().url().max(500),
+});
+
+export const createMidContentSchema = z.object({
+  image: z.string().optional().nullable(),
+  headline: z.string().min(1, "Headline is required").max(200),
+  description: z.string().max(2000).default(""),
+  linkButtons: z.array(linkButtonSchema).max(5).default([]),
+  active: z.boolean().default(true),
+});
+
+export const updateMidContentSchema = createMidContentSchema.partial();
+
+export const reorderMidContentSchema = z.object({
+  orderedIds: z.array(z.string()),
+});

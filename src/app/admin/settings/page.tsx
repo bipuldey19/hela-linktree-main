@@ -5,9 +5,10 @@ import SettingsPageClient from "./SettingsPageClient";
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const [settings, links] = await Promise.all([
+  const [settings, links, midContent] = await Promise.all([
     prisma.siteSettings.findUnique({ where: { id: "singleton" } }),
     prisma.link.findMany({ orderBy: { order: "asc" } }),
+    prisma.midContent.findMany({ orderBy: { order: "asc" } }),
   ]);
 
   const theme = parseTheme(settings?.theme || "{}");
@@ -38,6 +39,15 @@ export default async function SettingsPage() {
         color: l.color,
         order: l.order,
         active: l.active,
+      }))}
+      midContent={midContent.map((m) => ({
+        id: m.id,
+        image: m.image,
+        headline: m.headline,
+        description: m.description,
+        linkButtons: m.linkButtons,
+        order: m.order,
+        active: m.active,
       }))}
     />
   );
