@@ -7,12 +7,22 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await prisma.siteSettings.findUnique({
     where: { id: "singleton" },
-    select: { favicon: true },
+    select: { favicon: true, updatedAt: true },
   });
 
+  const baseUrl = process.env.SITE_URL || "http://localhost:3000";
+  let iconUrl: string;
+  if (settings?.favicon) {
+    const path = settings.favicon.startsWith("http") ? settings.favicon : `${baseUrl}${settings.favicon.startsWith("/") ? "" : "/"}${settings.favicon}`;
+    const v = settings.updatedAt ? new Date(settings.updatedAt).getTime() : Date.now();
+    iconUrl = `${path}${path.includes("?") ? "&" : "?"}v=${v}`;
+  } else {
+    iconUrl = `${baseUrl}/favicon.ico`;
+  }
+
   return {
-    metadataBase: new URL(process.env.SITE_URL || "http://localhost:3000"),
-    icons: settings?.favicon ? { icon: settings.favicon } : undefined,
+    metadataBase: new URL(baseUrl),
+    icons: { icon: iconUrl },
   };
 }
 
@@ -24,6 +34,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Google tag (gtag.js) */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-9M6XLBKYBE"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-9M6XLBKYBE');
+            `,
+          }}
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"

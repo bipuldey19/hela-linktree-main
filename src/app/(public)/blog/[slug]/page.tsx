@@ -72,15 +72,27 @@ export default async function BlogPostPage({ params }: Props) {
       />
 
       <article className="max-w-3xl mx-auto px-5 py-12">
-        <Link
-          href="/blog"
-          className="inline-flex items-center gap-1.5 text-[13px] font-medium text-stone-400 hover:text-primary mb-8 transition-colors duration-200"
-        >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-          Back to blog
-        </Link>
+        <nav className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] font-medium text-stone-400 mb-8">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 hover:text-primary transition-colors duration-200"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            Home
+          </Link>
+          <span className="text-stone-300">·</span>
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-1.5 hover:text-primary transition-colors duration-200"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to blog
+          </Link>
+        </nav>
 
         {post.heroImage && (
           <div className="relative aspect-2/1 rounded-2xl overflow-hidden mb-10 shadow-lg shadow-stone-200/50 animate-fade-in">
