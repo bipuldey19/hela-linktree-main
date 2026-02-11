@@ -69,9 +69,9 @@ RUN mkdir -p public/uploads/blog public/uploads/site && \
 
 # Run as root so entrypoint can fix volume permissions on start, then PM2 runs as nextjs
 
+# Default port; override at runtime via env PORT (e.g. in docker-compose)
 EXPOSE 3000
 
-ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 ENTRYPOINT ["./docker-entrypoint.sh"]

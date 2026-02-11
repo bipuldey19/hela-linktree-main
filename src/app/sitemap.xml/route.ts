@@ -13,7 +13,8 @@ export async function GET() {
     select: { slug: true, updatedAt: true },
   });
 
-  const baseUrl = settings?.siteUrl || process.env.SITE_URL || "http://localhost:3000";
+  const port = process.env.PORT || 3000;
+  const baseUrl = settings?.siteUrl || process.env.SITE_URL || `http://localhost:${port}`;
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

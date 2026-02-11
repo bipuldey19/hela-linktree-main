@@ -12,10 +12,10 @@ module.exports = {
       max_memory_restart: "512M",
       env: {
         NODE_ENV: "production",
-        PORT: 3000,
+        PORT: process.env.PORT || 3000,
       },
     },
     // Option B: Standalone deploy (copy .next/standalone + .next/static + public to server)
-    // { name: "hela-site", script: "server.js", cwd: "/var/www/hela-site", instances: 1, autorestart: true, env: { NODE_ENV: "production", PORT: 3000 } },
+    // { name: "hela-site", script: "server.js", cwd: "/var/www/hela-site", instances: 1, autorestart: true, env: { NODE_ENV: "production", PORT: process.env.PORT || 3000 } },
   ],
 };

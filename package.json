@@ -5,9 +5,9 @@
   "packageManager": "npm@10.9.0",
   "scripts": {
     "postinstall": "prisma generate",
-    "dev": "next dev",
+    "dev": "node scripts/start-with-port.cjs dev",
     "build": "prisma generate && env NEXT_IGNORE_INCORRECT_LOCKFILE=1 next build",
-    "start": "next start",
+    "start": "node scripts/start-with-port.cjs start",
     "lint": "eslint",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",

@@ -26,7 +26,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "Not Found" };
   }
 
-  const siteUrl = process.env.SITE_URL || "http://localhost:3000";
+  const port = process.env.PORT || 3000;
+  const siteUrl = process.env.SITE_URL || `http://localhost:${port}`;
 
   return {
     title: post.metaTitle || post.title,
@@ -57,7 +58,8 @@ export default async function BlogPostPage({ params }: Props) {
     notFound();
   }
 
-  const siteUrl = process.env.SITE_URL || "http://localhost:3000";
+  const port = process.env.PORT || 3000;
+  const siteUrl = process.env.SITE_URL || `http://localhost:${port}`;
   const jsonLd = generateBlogPostJsonLd(post, siteUrl);
 
   const readingTime = Math.ceil(

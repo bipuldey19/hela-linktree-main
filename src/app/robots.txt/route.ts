@@ -1,5 +1,6 @@
 export async function GET() {
-  const siteUrl = process.env.SITE_URL || "http://localhost:3000";
+  const port = process.env.PORT || 3000;
+  const siteUrl = process.env.SITE_URL || `http://localhost:${port}`;
 
   const body = `User-agent: *
 Allow: /

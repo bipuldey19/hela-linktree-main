@@ -10,7 +10,8 @@ export async function generateMetadata(): Promise<Metadata> {
     select: { favicon: true, updatedAt: true },
   });
 
-  const baseUrl = process.env.SITE_URL || "http://localhost:3000";
+  const port = process.env.PORT || 3000;
+  const baseUrl = process.env.SITE_URL || `http://localhost:${port}`;
   let iconUrl: string;
   if (settings?.favicon) {
     const path = settings.favicon.startsWith("http") ? settings.favicon : `${baseUrl}${settings.favicon.startsWith("/") ? "" : "/"}${settings.favicon}`;
